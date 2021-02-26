@@ -1,0 +1,119 @@
+[gd_scene load_steps=24 format=2]
+
+[ext_resource path="res://Player/Player.gd" type="Script" id=1]
+[ext_resource path="res://Animations/RunUpAnim.tres" type="Animation" id=2]
+[ext_resource path="res://Animations/RunDownAnim.tres" type="Animation" id=3]
+[ext_resource path="res://Animations/RunLeftAnim.tres" type="Animation" id=4]
+[ext_resource path="res://Animations/RunRightAnim.tres" type="Animation" id=5]
+[ext_resource path="res://Animations/Idle_Animation.tres" type="Animation" id=6]
+[ext_resource path="res://World/Bush.png" type="Texture" id=7]
+[ext_resource path="res://Sprites/Sprites_ChronoTrigger_Walking_Cutout_Fixed.png" type="Texture" id=8]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 8.00376
+height = 0.0
+
+[sub_resource type="AnimationNodeAnimation" id=2]
+animation = "Idle_Animation"
+
+[sub_resource type="AnimationNodeAnimation" id=3]
+animation = "Idle_Animation"
+
+[sub_resource type="AnimationNodeAnimation" id=4]
+animation = "Idle_Animation"
+
+[sub_resource type="AnimationNodeAnimation" id=5]
+animation = "Idle_Animation"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=6]
+blend_point_0/node = SubResource( 2 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 3 )
+blend_point_1/pos = Vector2( 0, 1 )
+blend_point_2/node = SubResource( 4 )
+blend_point_2/pos = Vector2( 1, 0 )
+blend_point_3/node = SubResource( 5 )
+blend_point_3/pos = Vector2( 0, -1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id=7]
+animation = "RunLeftAnim"
+
+[sub_resource type="AnimationNodeAnimation" id=8]
+animation = "RunRightAnim"
+
+[sub_resource type="AnimationNodeAnimation" id=9]
+animation = "RunDownAnim"
+
+[sub_resource type="AnimationNodeAnimation" id=10]
+animation = "RunUpAnim"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=11]
+blend_point_0/node = SubResource( 7 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 8 )
+blend_point_1/pos = Vector2( 1, 0 )
+blend_point_2/node = SubResource( 9 )
+blend_point_2/pos = Vector2( 0, 0.9 )
+blend_point_3/node = SubResource( 10 )
+blend_point_3/pos = Vector2( 0, -1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=12]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=13]
+
+[sub_resource type="AnimationNodeStateMachine" id=14]
+states/Idle/node = SubResource( 6 )
+states/Idle/position = Vector2( 574.653, 53.2 )
+states/Walk/node = SubResource( 11 )
+states/Walk/position = Vector2( 784.653, 53.2 )
+transitions = [ "Idle", "Walk", SubResource( 12 ), "Walk", "Idle", SubResource( 13 ) ]
+start_node = "Idle"
+graph_offset = Vector2( -109.347, -52.8 )
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=15]
+
+[node name="World" type="Node2D"]
+
+[node name="Bush" type="Sprite" parent="."]
+position = Vector2( 38.1334, 21.4445 )
+texture = ExtResource( 7 )
+
+[node name="Player" type="KinematicBody2D" parent="."]
+position = Vector2( 98.3849, 23.9655 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Player"]
+texture = ExtResource( 8 )
+hframes = 34
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2( 0, 6 )
+shape = SubResource( 1 )
+
+[node name="MainPlayerAnims" type="AnimationPlayer" parent="Player"]
+autoplay = "Idle_Animation"
+anims/Idle_Animation = ExtResource( 6 )
+anims/RunDownAnim = ExtResource( 3 )
+anims/RunLeftAnim = ExtResource( 4 )
+anims/RunRightAnim = ExtResource( 5 )
+anims/RunUpAnim = ExtResource( 2 )
+
+[node name="AnimationTree" type="AnimationTree" parent="Player"]
+tree_root = SubResource( 14 )
+anim_player = NodePath("../MainPlayerAnims")
+active = true
+parameters/playback = SubResource( 15 )
+parameters/Idle/blend_position = Vector2( 0, 0 )
+parameters/Walk/blend_position = Vector2( 0, 0 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+position = Vector2( -0.35, -0.0166667 )
+scale = Vector2( 1.02083, 1.02083 )
+polygon = PoolVector2Array( 24, 32, 24, 8, 48, 8, 48, 32 )
